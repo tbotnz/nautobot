@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from nautobot.utilities.querysets import RestrictedQuerySet
+from nautobot.utilities.querysets import RestrictedQuerySet, RestrictedManager
 
 
 class BaseModel(models.Model):
@@ -25,7 +25,8 @@ class BaseModel(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
 
-    objects = RestrictedQuerySet.as_manager()
+    # objects = RestrictedQuerySet.as_manager()
+    objects = RestrictedManager()
 
     @property
     def present_in_database(self):

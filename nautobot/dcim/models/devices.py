@@ -13,7 +13,7 @@ from django.utils.safestring import mark_safe
 from nautobot.dcim.choices import DeviceFaceChoices, SubdeviceRoleChoices
 
 from nautobot.extras.models import ConfigContextModel, StatusModel
-from nautobot.extras.querysets import ConfigContextModelQuerySet
+from nautobot.extras.querysets import ConfigContextModelQuerySet, ConfigContextModelManager
 from nautobot.extras.utils import extras_features
 from nautobot.core.fields import AutoSlugField
 from nautobot.core.models.generics import OrganizationalModel, PrimaryModel
@@ -543,7 +543,8 @@ class Device(PrimaryModel, ConfigContextModel, StatusModel):
         null=True,
     )
 
-    objects = ConfigContextModelQuerySet.as_manager()
+    # objects = ConfigContextModelQuerySet.as_manager()
+    objects = ConfigContextModelManager()
 
     csv_headers = [
         "name",

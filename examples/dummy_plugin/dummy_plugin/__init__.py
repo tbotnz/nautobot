@@ -39,7 +39,7 @@ class DummyPluginConfig(PluginConfig):
         # Connect the nautobot_database_ready_callback() function to the nautobot_database_ready signal.
         # This is by no means a requirement for all plugins, but is a useful way for a plugin to perform
         # database operations such as defining CustomFields, Relationships, etc. at the appropriate time.
-        nautobot_database_ready.connect(nautobot_database_ready_callback, sender=self)
+        # nautobot_database_ready.connect(nautobot_database_ready_callback, sender=self)
 
 
 config = DummyPluginConfig

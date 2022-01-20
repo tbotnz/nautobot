@@ -1,9 +1,9 @@
-from django.db.models import OuterRef, Subquery, Q
+from django.db.models import Manager, OuterRef, Subquery, Q
 from django_celery_beat.managers import ExtendedQuerySet
 
 from nautobot.extras.models.tags import TaggedItem
 from nautobot.utilities.query_functions import EmptyGroupByJSONBAgg
-from nautobot.utilities.querysets import RestrictedQuerySet
+from nautobot.utilities.querysets import RestrictedManager, RestrictedQuerySet
 
 
 class ConfigContextQuerySet(RestrictedQuerySet):
@@ -128,6 +128,13 @@ class ConfigContextModelQuerySet(RestrictedQuerySet):
         )
 
         return base_query
+
+
+class ConfigContextModelManager(RestrictedManager):
+    queryset_class = ConfigContextModelQuerySet
+
+    def annotate_config_context_data(self):
+        return self.get_queryset().annotate_config_context_data()
 
 
 class ScheduledJobExtendedQuerySet(RestrictedQuerySet, ExtendedQuerySet):
