@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 from nautobot.utilities.querysets import RestrictedQuerySet
@@ -24,6 +25,22 @@ class BaseModel(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
+    dynamic_groups = GenericRelation("extras.DynamicGroupAssignment", related_query_name="dynamic_groups")
+    '''
+    dynamic_groups = GenericRelation(
+        "extras.DynamicGroupAssignment",
+        related_query_name="dynamic_groups_%(app_label)s_%(class)s",
+    )
+    dynamic_groups = models.ManyToManyField(
+        "extras.DynamicGroup",
+        db_index=True,
+        related_name="%(app_label)s_%(class)s_related",
+        through="extras.DynamicGroupAssignment",
+        # through_fields=("dynamic_group", "content_type"),
+        through_fields=("content_type", "dynamic_group"),
+        help_text="Dynamic Groups to which this objects is assigned."
+    )
+    '''
 
     objects = RestrictedQuerySet.as_manager()
 

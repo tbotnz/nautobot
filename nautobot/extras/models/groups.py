@@ -1,8 +1,12 @@
 """Dynamic Groups Models."""
 
+import uuid
+
 from django.conf import settings
 from django.urls import reverse
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.db.models import Model
@@ -94,7 +98,7 @@ class DynamicGroup(BaseModel, ChangeLoggedModel):
         """Return the number of objects in the group."""
         return self.get_queryset().count()
 
-    def get_url_to_group_members(self):
+    def get_dynamicgroup_url(self):
         """Get url to group members."""
         model = self.content_type.model_class()
         # Move this function to dgm class to simplify support for plugin
@@ -104,7 +108,62 @@ class DynamicGroup(BaseModel, ChangeLoggedModel):
 
         filter_str = dynamicgroupmap_class.get_filterset_as_string(self.filter)
 
+        # FIXME(jathan): This seems incredibly fragile.
         if filter_str:
             return f"{base_url}?{filter_str}"
 
         return base_url
+
+    @property
+    def map(self):
+        if getattr(self, "_map", None) is None:
+            model = self.content_type.model_class()
+            dynamicgroupmap_class = get_dynamicgroupmap_for_model(model)
+            self._map = dynamicgroupmap_class
+
+        return self._map
+
+    def save(self, **kwargs):
+        members = self.get_queryset()
+        if members.exists():
+            for obj in members.iterator():
+                DynamicGroupAssignment.objects.get_or_create(
+                    content_type=self.content_type,
+                    object_id=obj.pk,
+                )
+
+
+
+
+
+
+class DynamicGroupAssignment(ChangeLoggedModel, BaseModel):
+    """Intermediate model for assignment of objects to DynamicGroups."""
+
+    dynamic_group = models.ForeignKey(
+        "extras.DynamicGroup", 
+        related_name="dg_assignments",
+        on_delete=models.CASCADE,
+        db_index=True,
+        help_text="Dynamic Group to which this assignment is bound."
+    )
+    content_type = models.ForeignKey(
+        ContentType,
+        related_name="dg_assignments",
+        on_delete=models.CASCADE,
+        db_index=True,
+    )
+    object_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    content_object = GenericForeignKey(
+        "content_type",
+        "object_id",
+    )
+
+    def clean(self):
+        if self.content_type != dynamic_group.content_type:
+            raise ValidationError({
+                "content_type": "Object content_type must match that of the DynamicGroup to which it is assigned"
+            })
+
+    def __str__(self):
+        return f"{self.content_object!r} -> {self.dynamic_group!r}"

@@ -2,7 +2,7 @@ from .change_logging import ChangeLoggedModel, ObjectChange
 from .statuses import Status, StatusField, StatusModel
 from .customfields import ComputedField, CustomField, CustomFieldChoice, CustomFieldModel
 from .datasources import GitRepository
-from .groups import DynamicGroup
+from .groups import DynamicGroup, DynamicGroupAssignment
 from .relationships import Relationship, RelationshipModel, RelationshipAssociation
 from .models import (
     ConfigContext,
@@ -36,6 +36,7 @@ __all__ = (
     "CustomFieldModel",
     "CustomLink",
     "DynamicGroup",
+    "DynamicGroupAssignment",
     "ExportTemplate",
     "FileAttachment",
     "FileProxy",

@@ -282,7 +282,7 @@ class DynamicGroupTable(BaseTable):
         )
 
     def render_members(self, value, record):
-        return format_html(f'<a href="{record.get_url_to_group_members()}">{value}</a>')
+        return format_html(f'<a href="{record.get_dynamicgroup_url()}">{value}</a>')
 
 
 class ExportTemplateTable(BaseTable):
