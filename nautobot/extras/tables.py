@@ -20,7 +20,7 @@ from nautobot.utilities.tables import (
     TagColumn,
     ToggleColumn,
 )
-from nautobot.utilities.templatetags.helpers import render_markdown
+from nautobot.utilities.templatetags.helpers import render_boolean, render_markdown
 from .choices import LogLevelChoices
 from .jobs import Job
 from .models import (
@@ -29,6 +29,7 @@ from .models import (
     ConfigContextSchema,
     CustomField,
     CustomLink,
+    DynamicGroup,
     ExportTemplate,
     GitRepository,
     GraphQLQuery,
@@ -193,10 +194,10 @@ class ConfigContextSchemaValidationStateColumn(tables.Column):
             self.validator.validate(data)
         except JSONSchemaValidationError as e:
             # Return a red x (like a boolean column) and the validation error message
-            return format_html(f'<span class="text-danger"><i class="mdi mdi-close-thick"></i>{e.message}</span>')
+            return render_boolean(False) + format_html('<span class="text-danger">{}</span>', e.message)
 
         # Return a green check (like a boolean column)
-        return mark_safe('<span class="text-success"><i class="mdi mdi-check-bold"></i></span>')
+        return render_boolean(True)
 
 
 class CustomFieldTable(BaseTable):
@@ -260,6 +261,28 @@ class CustomLinkTable(BaseTable):
             "group_name",
             "weight",
         )
+
+
+class DynamicGroupTable(BaseTable):
+
+    pk = ToggleColumn()
+    name = tables.LinkColumn(viewname="extras:dynamicgroup_edit", args=[Accessor("id")])
+    members = tables.Column(accessor="count", verbose_name="Group members")
+    # actions = ButtonsColumn(Group, buttons=("edit", "delete"))
+    class Meta(BaseTable.Meta):  # pylint: disable=too-few-public-methods
+        """Resource Manager Meta."""
+
+        model = DynamicGroup
+        fields = (
+            "name",
+            "description",
+            "content_type",
+            "members",
+            # "actions",
+        )
+
+    def render_members(self, value, record):
+        return format_html(f'<a href="{record.get_dynamicgroup_url()}">{value}</a>')
 
 
 class ExportTemplateTable(BaseTable):

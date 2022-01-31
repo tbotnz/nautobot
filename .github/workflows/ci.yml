@@ -7,7 +7,7 @@ on:  # yamllint disable
       - "nautobot/docs/**"
       - "examples/**"
       # The example plugin should probably trigger CI
-      - "!examples/dummy_plugin"
+      - "!examples/example_plugin"
       - "**.md"
       - "development/**"
       - ".github/**"
@@ -233,9 +233,9 @@ jobs:
           tags: |
             type=raw,value={{branch}}-py${{ matrix.python-version }}
             type=raw,value={{branch}}-{{sha}}-{{date 'X'}}-py${{ matrix.python-version }}
-            type=raw,value={{branch}},enable=${{ matrix.python-version == 3.6 }}
-            type=raw,value={{branch}}-{{sha}}-{{date 'X'}},enable=${{ matrix.python-version == 3.6 }}
-            type=raw,value=latest,enable=${{ matrix.python-version == 3.6 && github.ref == 'refs/heads/develop' }}
+            type=raw,value={{branch}},enable=${{ matrix.python-version == 3.7 }}
+            type=raw,value={{branch}}-{{sha}}-{{date 'X'}},enable=${{ matrix.python-version == 3.7 }}
+            type=raw,value=latest,enable=${{ matrix.python-version == 3.7 && github.ref == 'refs/heads/develop' }}
             type=raw,value=latest-py${{ matrix.python-version }},enable=${{ github.ref == 'refs/heads/develop' }}
       - name: "Build"
         uses: "docker/build-push-action@v2"
@@ -259,9 +259,9 @@ jobs:
           tags: |
             type=raw,value={{branch}}-py${{ matrix.python-version }}
             type=raw,value={{branch}}-{{sha}}-{{date 'X'}}-py${{ matrix.python-version }}
-            type=raw,value={{branch}},enable=${{ matrix.python-version == 3.6 }}
-            type=raw,value={{branch}}-{{sha}}-{{date 'X'}},enable=${{ matrix.python-version == 3.6 }}
-            type=raw,value=latest,enable=${{ matrix.python-version == 3.6 && github.ref == 'refs/heads/develop' }}
+            type=raw,value={{branch}},enable=${{ matrix.python-version == 3.7 }}
+            type=raw,value={{branch}}-{{sha}}-{{date 'X'}},enable=${{ matrix.python-version == 3.7 }}
+            type=raw,value=latest,enable=${{ matrix.python-version == 3.7 && github.ref == 'refs/heads/develop' }}
             type=raw,value=latest-py${{ matrix.python-version }},enable=${{ github.ref == 'refs/heads/develop' }}
       - name: "Build Dev Containers"
         uses: "docker/build-push-action@v2"
