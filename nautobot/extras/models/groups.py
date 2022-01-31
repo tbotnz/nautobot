@@ -216,9 +216,18 @@ from django.db.models import signals
 
 logger = logging.getLogger(__name__)
 
-@receiver(signals.post_init)
-def stash_existing_dynamic_group_memberships(sender, instance, **kwargs):
-    if sender == DynamicGroupAssignment:
+skip_models = ["dynamicgroupassignment"]
+
+
+@receiver(signals.pre_save)
+def stash_existing_dynamic_group_memberships(sender, instance, raw=False, **kwargs):
+    # Only make changes if this isn't raw (e.g. during fixture loading)
+    if raw:
+        return
+
+    # Only work w/ objects that inherit from BaseModel
+    model_name = sender._meta.model_name
+    if not issubclass(sender, BaseModel) or model_name in skip_models:
         return
 
     skip = ["example_plugin"]
@@ -240,7 +249,9 @@ def refresh_dynamic_group_membership(sender, instance, created=False, raw=False,
     if raw:
         return
 
-    if sender == DynamicGroupAssignment:
+    # Only work w/ objects that inherit from BaseModel
+    model_name = sender._meta.model_name
+    if not issubclass(sender, BaseModel) or model_name in skip_models:
         return
 
     logger.debug("Instance %r saved/deleted", instance)
