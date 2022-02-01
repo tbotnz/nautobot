@@ -268,6 +268,7 @@ INSTALLED_APPS = [
     "django_jinja",
     "django_tables2",
     "django_prometheus",
+    "gm2m",
     "mptt",
     "rest_framework",
     "social_django",

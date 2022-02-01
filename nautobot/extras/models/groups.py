@@ -152,7 +152,6 @@ class DynamicGroup(BaseModel, ChangeLoggedModel):
             dynamic_group=self,
             content_object=member,
         )
-        dga.full_clean()
         return dga
 
     @transaction.atomic
@@ -174,7 +173,8 @@ class DynamicGroup(BaseModel, ChangeLoggedModel):
     def save(self, **kwargs):
         members = self.get_queryset()
         new_members = self.assign_members(members)
-        DynamicGroupAssignment.objects.bulk_create(new_members)
+        # DynamicGroupAssignment.objects.bulk_create(new_members)
+        DynamicGroupAssignment.objects.bulk_create(new_members, ignore_conflicts=True)
         self.clean_assignments()  # Cache new assignments
         super().save(**kwargs)
 

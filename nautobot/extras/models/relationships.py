@@ -20,7 +20,7 @@ from nautobot.utilities.forms import (
     DynamicModelMultipleChoiceField,
     widgets,
 )
-from nautobot.utilities.querysets import RestrictedQuerySet
+from nautobot.utilities.querysets import RestrictedManager, RestrictedQuerySet
 
 
 logger = logging.getLogger(__name__)
@@ -192,7 +192,8 @@ class RelationshipModel(models.Model):
         return resp
 
 
-class RelationshipManager(models.Manager.from_queryset(RestrictedQuerySet)):
+# class RelationshipManager(models.Manager.from_queryset(RestrictedQuerySet)):
+class RelationshipManager(RestrictedManager):
     use_in_migrations = True
 
     def get_for_model(self, model):

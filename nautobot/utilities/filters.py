@@ -76,6 +76,11 @@ class MultiValueMACAddressFilter(django_filters.MultipleChoiceFilter):
     field_class = multivalue_field_factory(MACAddressField)
 
 
+from gm2m import GM2MField
+class MultiValueGM2MFilter(django_filters.MultipleChoiceFilter):
+    field_class = multivalue_field_factory(GM2MField)
+
+
 class TreeNodeMultipleChoiceFilter(django_filters.ModelMultipleChoiceFilter):
     """
     Filters for a set of Models, including all descendant models within a Tree.  Example: [<Region: R1>,<Region: R2>]
@@ -234,6 +239,7 @@ class BaseFilterSet(django_filters.FilterSet):
             models.URLField: {"filter_class": MultiValueCharFilter},
             models.UUIDField: {"filter_class": MultiValueCharFilter},
             MACAddressField: {"filter_class": MultiValueMACAddressFilter},
+            GM2MField: {"filter_class": MultiValueGM2MFilter},
         }
     )
 

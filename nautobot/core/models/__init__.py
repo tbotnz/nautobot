@@ -3,6 +3,7 @@ import uuid
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.forms.models import model_to_dict
+from gm2m import GM2MField
 
 from nautobot.utilities.querysets import RestrictedQuerySet, RestrictedManager
 
@@ -70,7 +71,12 @@ class BaseModel(models.Model, ModelDiffMixin):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True, editable=False)
-    dynamic_groups = GenericRelation("extras.DynamicGroupAssignment", related_query_name="dynamic_groups")
+    # dynamic_groups = GenericRelation("extras.DynamicGroupAssignment", related_query_name="dynamic_groups")
+    dynamic_groups = GM2MField(
+        through="extras.DynamicGroupAssignment",
+        related_query_name="dynamic_groups",
+        through_fields=("dynamic_group", "content_object"),
+    )
     '''
     dynamic_groups = GenericRelation(
         "extras.DynamicGroupAssignment",

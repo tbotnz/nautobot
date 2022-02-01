@@ -625,7 +625,8 @@ class CoreConfig(NautobotConfig):
     verbose_name = "Nautobot Core"
 
     def ready(self):
-        from graphene_django.converter import convert_django_field
+        from gm2m import GM2MField
+        from graphene_django.converter import convert_django_field, convert_field_to_list_or_connection
         from nautobot.core.graphql import BigInteger
 
         @convert_django_field.register(JSONField)
@@ -642,6 +643,8 @@ class CoreConfig(NautobotConfig):
         def convert_biginteger(field, registry=None):
             """Convert BigIntegerField to BigInteger scalar."""
             return BigInteger()
+
+        convert_django_field.register(GM2MField)(convert_field_to_list_or_connection)
 
         post_migrate.connect(post_migrate_send_nautobot_database_ready, sender=self)
 
