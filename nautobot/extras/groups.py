@@ -50,8 +50,9 @@ class BaseDynamicGroupMap:
 
         By default the queryset is generated based of the filterset but this is not mandatory
         """
-        filterset = cls.filterset(cls.get_filterset_params(filter), cls.model.objects.all())
-        return filterset.qs
+        # filterset = cls.filterset(cls.get_filterset_params(filter), cls.model.objects.all())
+        # return filterset.qs
+        return cls.model.objects.djangoql(filter)
 
     @classmethod
     def get_filterset_params(cls, filter):
@@ -64,6 +65,7 @@ class BaseDynamicGroupMap:
             return None
 
         result = ""
+        return result
 
         for key, value in cls.get_filterset_params(filter).items():
             if isinstance(value, list):

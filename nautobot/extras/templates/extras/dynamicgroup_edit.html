@@ -1,0 +1,55 @@
+{% extends 'generic/object_edit.html' %}
+{% load static %}
+{% load form_helpers %}
+
+{% block extra_styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'djangoql/css/completion.css' %}" />
+    <script src="{% static 'djangoql/js/completion.js' %}"></script>
+{% endblock extra_styles %}
+
+{% block form %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Dynamic Group</strong></div>
+        <div class="panel-body">
+            {% render_field form.name %}
+            {% render_field form.slug %}
+            {% render_field form.description %}
+            {% render_field form.content_type %}
+            {% render_field form.filter %}
+            <ul>
+            {% for item in search_results %}
+                <li>{{ item }}</li>
+            {% endfor %}
+             </ul>
+        </div>
+    </div>
+    {% include 'inc/extras_features_edit_form_fields.html' %}
+
+{% endblock form %}
+
+{% block javascript %}
+  <script>
+    DjangoQL.DOMReady(function () {
+      new DjangoQL({
+        // either JS object with a result of DjangoQLSchema(MyModel).as_dict(),
+        // or an URL from which this information could be loaded asynchronously
+        introspections: {{ introspections|safe }},
+
+        // css selector for query input or HTMLElement object.
+        // It should be a textarea
+        selector: 'textarea[name=filter]',
+
+        // optional, you can provide URL for Syntax Help link here.
+        // If not specified, Syntax Help link will be hidden.
+        syntaxHelp: null,
+
+        // optional, enable textarea auto-resize feature. If enabled,
+        // textarea will automatically grow its height when entered text
+        // doesn't fit, and shrink back when text is removed. The purpose
+        // of this is to see full search query without scrolling, could be
+        // helpful for really long queries.
+        autoResize: true
+      });
+    });
+  </script>
+{% endblock javascript %}

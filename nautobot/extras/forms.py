@@ -653,14 +653,14 @@ class DynamicGroupForm(BootstrapMixin, forms.ModelForm):
             "slug",
             "description",
             "content_type",
-            # "filter",
+            "filter",
         ]
 
     def __init__(self, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
         self.filter_field_names = []
-        self._append_filters()
+        # self._append_filters()
 
     def _append_filters(self):
         """Dynamically add the fields from the associated DynamicGroupMap to the form."""
@@ -712,6 +712,7 @@ class DynamicGroupForm(BootstrapMixin, forms.ModelForm):
         self.instance.filter = filter
         self.instance.save()
 
+    """
     def save(self, commit=True):
 
         obj = super().save(commit)
@@ -719,6 +720,7 @@ class DynamicGroupForm(BootstrapMixin, forms.ModelForm):
             self._save_filters()
 
         return obj
+    """
 
 
 #

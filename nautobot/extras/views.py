@@ -499,6 +499,7 @@ class DynamicGroupEditView(generic.ObjectEditView):
 
     queryset = DynamicGroup.objects.all()
     model_form = forms.DynamicGroupForm
+    template_name = "extras/dynamicgroup_edit.html"
 
 
 class DynamicGroupDeleteView(generic.ObjectDeleteView):
